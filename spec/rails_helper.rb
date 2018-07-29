@@ -78,4 +78,10 @@ Shoulda::Matchers.configure do |config|
     with.test_framework :rspec
     with.library :rails
   end
+
+  module Helpers
+    def asd(data)
+      JSON.parse(data, symbolize_names: true)
+    end
+  end
 end

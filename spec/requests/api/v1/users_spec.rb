@@ -15,9 +15,9 @@ RSpec.describe 'User API', type: :request do
 
     context 'when users exists' do
       it 'returns the user' do
-        user_response = JSON.parse(response.body)
+        user_response = JSON.parse(response.body, symbolize_names: true)
 
-        expect(user_response['id']).to eq user_id
+        expect(user_response[:id]).to eq user_id
       end
 
       it 'returns status 200' do
@@ -28,7 +28,7 @@ RSpec.describe 'User API', type: :request do
     context 'when users does not exists' do
       let(:user_id) { 0 }
 
-      it 'returns status 200' do
+      it 'returns status 404' do
         expect(response).to have_http_status 404
       end
     end
@@ -49,9 +49,9 @@ RSpec.describe 'User API', type: :request do
       end
 
       it 'returns json data for the created user' do
-        user_response = JSON.parse(response.body)
+        user_response = JSON.parse(response.body, symbolize_names: true)
 
-        expect(user_response['email']).to eq user_params[:email]
+        expect(user_response[:email]).to eq user_params[:email]
       end
     end
 
@@ -63,10 +63,72 @@ RSpec.describe 'User API', type: :request do
       end
 
       it 'returns json data for the errors' do
-        user_response = JSON.parse(response.body)
+        user_response = JSON.parse(response.body, symbolize_names: true)
 
-        expect(user_response).to have_key 'errors'
+        expect(user_response).to have_key :errors
       end
     end
+  end
+
+  describe 'PUT /users/:id' do
+    before do
+      headers = { 'Accept' => 'application/vnd.taskmanager.v1' }
+
+      put "/users/#{user_id}", params: { user: user_params }, headers: headers
+    end
+
+    context 'when the request parameters are valid' do
+      let(:user_params) { { email: 'foo@doo.com' } }
+
+      it 'returns status code 200' do
+        expect(response).to have_http_status 200
+      end
+
+      it 'returns json data for the updated user' do
+        user_response = JSON.parse(response.body, symbolize_names: true)
+
+        expect(user_response[:email]).to eq 'foo@doo.com'
+      end
+    end
+
+    context 'when the request parameters are invalid' do
+      let(:user_params) { attributes_for :user, email: 'invalid' }
+
+      it 'returns status code 422' do
+        expect(response).to have_http_status 422
+      end
+
+      it 'returns json data for the errors' do
+        user_response = JSON.parse(response.body, symbolize_names: true)
+
+        expect(user_response).to have_key :errors
+      end
+    end
+  end
+
+  describe 'DELETE /users/:id' do
+    before do
+      headers = { 'Accept' => 'application/vnd.taskmanager.v1' }
+
+      delete "/users/#{user_id}", params: {}, headers: headers
+    end
+
+    context 'when users exists' do
+      it 'removes user from database' do
+        expect(User.find_by(id: user_id)).to be_nil
+      end
+
+      it 'returns status 204' do
+        expect(response).to have_http_status 204
+      end
+    end
+
+    # context 'when users does not exists' do
+    #   let(:user_id) { 0 }
+    #
+    #   it 'returns status 200' do
+    #     expect(response).to have_http_status 404
+    #   end
+    # end
   end
 end
