@@ -45,7 +45,7 @@ RSpec.describe 'Task API' do
 
   describe 'POST /tasks' do
     before do
-      post "/tasks", params: { task: task_params }.to_json, headers: headers
+      post '/tasks', params: { task: task_params }.to_json, headers: headers
     end
 
     context 'when the params are valid' do
@@ -69,7 +69,7 @@ RSpec.describe 'Task API' do
     end
 
     context 'when the params are invalid' do
-      let(:task_params) { attributes_for :task, title: " " }
+      let(:task_params) { attributes_for :task, title: ' ' }
 
       it 'returns status code 422' do
         expect(response).to have_http_status 422
@@ -111,17 +111,33 @@ RSpec.describe 'Task API' do
     context 'when the params are invalid' do
       let(:task_params) { { title: '' } }
 
-      it "returns status code 422" do
+      it 'returns status code 422' do
         expect(response).to have_http_status 422
       end
 
-      it "returns the json erreor for title" do
+      it 'returns the json erreor for title' do
         expect(json_body[:errors]).to have_key(:title)
       end
 
-      it "does not update the task in the database" do
+      it 'does not update the task in the database' do
         expect(Task.find_by(title: task_params[:title])).to be_nil
       end
+    end
+  end
+
+  describe 'DELETE /tasks/:id' do
+    let!(:task) { create :task, user_id: user.id }
+
+    before do
+      delete "/tasks/#{task.id}", params: {}.to_json, headers: headers
+    end
+
+    it 'returns status code 204' do
+      expect(response).to have_http_status(204)
+    end
+
+    it 'removes the task from the database' do
+      expect { Task.find(task.id) }.to raise_error(ActiveRecord::RecordNotFound)
     end
   end
 end
