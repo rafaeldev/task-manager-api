@@ -20,7 +20,7 @@ RSpec.describe 'User API', type: :request do
 
     context 'when users exists' do
       it 'returns the user' do
-        expect(json_body[:id]).to eq user_id
+        expect(json_body[:data][:id].to_i).to eq user_id
       end
 
       it 'returns status 200' do
@@ -50,7 +50,7 @@ RSpec.describe 'User API', type: :request do
       end
 
       it 'returns json data for the created user' do
-        expect(json_body[:email]).to eq user_params[:email]
+        expect(json_body[:data][:attributes][:email]).to eq user_params[:email]
       end
     end
 
@@ -80,7 +80,7 @@ RSpec.describe 'User API', type: :request do
       end
 
       it 'returns json data for the updated user' do
-        expect(json_body[:email]).to eq 'foo@doo.com'
+        expect(json_body[:data][:attributes][:email]).to eq 'foo@doo.com'
       end
     end
 
