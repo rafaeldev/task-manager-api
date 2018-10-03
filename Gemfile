@@ -52,4 +52,6 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
 
 gem 'devise'
 
-gem 'active_model_serializers' #ActiveModelSerializers is undergoing some renovations
+gem 'active_model_serializers' # ActiveModelSerializers is undergoing some renovations
+
+gem 'ransack' # Object-based searching. http://ransack-demo.herokuapp.com
