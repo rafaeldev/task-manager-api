@@ -37,13 +37,13 @@ RSpec.describe 'Task API' do
       let!(:task_4) { create(:task, title: 'Buy a new car', user_id: user.id ) }
 
       before do
-        get '/tasks?q[title_cont]=note', params: {}, headers: headers
+        get '/tasks?q[title_cont]=note&q[s]=title+ASC', params: {}, headers: headers
       end
 
       it 'returns only the tasks matching' do
         returned_tasks_title = json_body[:data].map { |t| t[:attributes][:title] }
 
-        expect(returned_tasks_title).to eq [task_1.title, task_2.title]
+        expect(returned_tasks_title).to eq [task_2.title, task_1.title]
       end
     end
   end
