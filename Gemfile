@@ -55,3 +55,7 @@ gem 'devise'
 gem 'active_model_serializers' # ActiveModelSerializers is undergoing some renovations
 
 gem 'ransack' # Object-based searching. http://ransack-demo.herokuapp.com
+
+gem 'omniauth'
+
+gem 'devise_token_auth'
